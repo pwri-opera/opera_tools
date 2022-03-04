@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>opera_sim_tools</name>
+  <name>opera_tools</name>
   <version>0.0.0</version>
-  <description>The opera_sim_tools package</description>
+  <description>The opera_tools package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
