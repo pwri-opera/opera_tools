@@ -1,11 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import rclpy
-import math
 from tf2_ros import TransformBroadcaster
-from sensor_msgs.msg import Imu
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import PoseStamped, TransformStamped
-from tf2_msgs.msg import TFMessage
+from geometry_msgs.msg import TransformStamped
 from rclpy.node import Node
 
 
@@ -14,20 +11,23 @@ class OdomBroadcaster(Node):
     def __init__(self):
         super().__init__('odom_tf_broadcaster')
         self.br = TransformBroadcaster(self)
-        self.declare_parameter('odom_frame', "odom")
-        self.declare_parameter('base_link_frame', "base_link")
-        self.odom_frame = self.get_parameter('odom_frame').get_parameter_value().string_value
-        self.base_link_frame = self.get_parameter('base_link_frame').get_parameter_value().string_value
+        self.declare_parameter('odom_topic', "/ic120/odom")
+        self.odom_frame = self.get_parameter('odom_topic').get_parameter_value().string_value
         self.odom_sub = self.create_subscription(Odometry, self.odom_frame, self.odom_cb, 10)
 
     def odom_cb(self, msg):
-        self.br.sendTransform(
-            (msg.pose.pose.position.x, msg.pose.pose.position.y, 0),
-            (msg.pose.pose.orientation.x, msg.pose.pose.orientation.y, msg.pose.pose.orientation.z, msg.pose.pose.orientation.w),
-            msg.header.stamp,
-            self.base_link_frame,
-            self.odom_frame
-        )
+        transform = TransformStamped()
+        transform.header.stamp = msg.header.stamp
+        transform.header.frame_id = "ic120_tf/odom"
+        transform.child_frame_id = "ic120_tf/base_link"
+        transform.transform.translation.x = msg.pose.pose.position.x
+        transform.transform.translation.y = msg.pose.pose.position.y
+        transform.transform.translation.z = msg.pose.pose.position.z
+        transform.transform.rotation.x = msg.pose.pose.orientation.x
+        transform.transform.rotation.y = msg.pose.pose.orientation.y
+        transform.transform.rotation.z = msg.pose.pose.orientation.z
+        transform.transform.rotation.w = msg.pose.pose.orientation.w
+        self.br.sendTransform(transform)
 
 
 def main(args=None):
