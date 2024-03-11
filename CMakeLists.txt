@@ -26,3 +26,15 @@ add_executable(nav_gazebo_odom src/nav_gazebo_odom.cpp)
 target_link_libraries(nav_gazebo_odom
   ${catkin_LIBRARIES}
 )
+
+install(TARGETS nav_gazebo_odom
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+catkin_install_python(PROGRAMS
+  scripts/odom_broadcaster.py
+  scripts/poseStamped2Odometry.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
